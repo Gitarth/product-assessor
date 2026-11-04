@@ -14,11 +14,10 @@ The only thing it writes is its own project-local history under `.product-assess
 
 ## Install
 
-As a plugin:
+As a plugin, from inside Claude Code (one step on 2.1.275 or later):
 
 ```
-claude plugin marketplace add Gitarth/product-assessor
-claude plugin install product-assessor
+/plugin install product-assessor --marketplace Gitarth/product-assessor
 ```
 
 Or copy the skill folder into your user skills:
