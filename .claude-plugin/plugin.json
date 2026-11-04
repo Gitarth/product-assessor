@@ -1,0 +1,10 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "product-assessor",
+  "version": "0.1.0",
+  "description": "Independent, skeptical commercial assessment of any product or business: market capture and risk-adjusted long-term profitability. Advisor only.",
+  "author": { "name": "Gitarth", "url": "https://github.com/Gitarth" },
+  "repository": "https://github.com/Gitarth/product-assessor",
+  "license": "MIT",
+  "keywords": ["skill", "product-strategy", "pricing", "competitive-analysis", "business"]
+}

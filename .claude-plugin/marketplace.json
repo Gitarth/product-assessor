@@ -1,0 +1,12 @@
+{
+  "name": "product-assessor",
+  "description": "Skeptical commercial advisor skill for Claude Code.",
+  "owner": { "name": "Gitarth", "url": "https://github.com/Gitarth" },
+  "plugins": [
+    {
+      "name": "product-assessor",
+      "source": "./",
+      "description": "Independent commercial assessment: market, pricing, competition, unit economics, product and technical decisions by their business consequence. Advisor only."
+    }
+  ]
+}
