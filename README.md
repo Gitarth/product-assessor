@@ -1,6 +1,6 @@
 # product-assessor
 
-A Claude Code skill that acts as an independent, skeptical commercial advisor. It assesses a
+An agent skill (Claude Code, Codex, OpenCode, Zed) that acts as an independent, skeptical commercial advisor. It assesses a
 product or business for **realistically achievable market capture** and **risk-adjusted
 long-term profitability**, across any industry, business model or stack.
 
@@ -14,18 +14,34 @@ The only thing it writes is its own project-local history under `.product-assess
 
 ## Install
 
-As a plugin, from inside Claude Code (one step on 2.1.275 or later):
+Works in Claude Code, Codex, OpenCode and Zed. One skill folder, the
+[Agent Skills](https://agentskills.io) format.
+
+**Claude Code** (plugin, one step on 2.1.275 or later):
 
 ```
 /plugin install product-assessor --marketplace Gitarth/product-assessor
 ```
 
-Or copy the skill folder into your user skills:
+**Codex, Zed, OpenCode** (all three read `~/.agents/skills/`):
 
 ```
 git clone https://github.com/Gitarth/product-assessor
-cp -r product-assessor/skills/product-assessor ~/.claude/skills/
+cp -r product-assessor/.agents/skills/product-assessor ~/.agents/skills/
 ```
+
+OpenCode also reads `~/.config/opencode/skills/` and `~/.claude/skills/`; any of the three
+works. Codex and Zed pick new skills up automatically (restart if not).
+
+**Any agent, via the skills CLI:**
+
+```
+npx skills add Gitarth/product-assessor
+```
+
+**Per project:** clone or copy into `<repo>/.agents/skills/product-assessor/` (Codex, Zed,
+OpenCode) or `<repo>/.claude/skills/product-assessor/` (Claude Code, OpenCode). This repo
+itself carries the skill at `.agents/skills/`, so opening it in Codex, Zed or OpenCode loads it.
 
 ## Use
 
@@ -51,15 +67,15 @@ direction, validation plan).
 2. **Inventory evidence, cheapest first**: existing docs, then targeted code search, then
    web. Reuses any code map that already exists; never scans a whole repository.
 3. **Pick metrics for this business model** from
-   [`metrics-by-model.md`](skills/product-assessor/references/metrics-by-model.md).
+   [`metrics-by-model.md`](.agents/skills/product-assessor/references/metrics-by-model.md).
    A consultancy does not get MRR and churn; a retailer does not get CAC/LTV as a headline.
 4. **Research gaps** within a budget (default 8 web lookups, each dated and cited), under
-   the evidence rules in [`research.md`](skills/product-assessor/references/research.md).
+   the evidence rules in [`research.md`](.agents/skills/product-assessor/references/research.md).
 5. **Analyze and rank**: upside × probability, minus downside, weighted by reversibility.
-6. **Report**, verdict first, per [`report.md`](skills/product-assessor/references/report.md).
+6. **Report**, verdict first, per [`report.md`](.agents/skills/product-assessor/references/report.md).
 7. **Record** to `.product-assessor/` when the project will be assessed again, so later
    runs compare predictions with outcomes
-   ([`history.md`](skills/product-assessor/references/history.md)).
+   ([`history.md`](.agents/skills/product-assessor/references/history.md)).
 
 ## Project-local history
 
@@ -90,13 +106,14 @@ Open: (1) infra cost per tenant at 10 stores? (2) why did the last 3 prospects n
 ## Layout
 
 ```
-skills/product-assessor/
+.agents/skills/product-assessor/   (the skill; Codex, Zed and OpenCode read this path directly)
   SKILL.md                         workflow, scope rule, depth, guardrails
+  agents/openai.yaml               Codex / ChatGPT display metadata (optional)
   references/metrics-by-model.md   which metrics apply to which business model, and which to skip
   references/report.md             report sections, ranking formula
   references/research.md           evidence tiers, source rules, research budget
   references/history.md            .product-assessor/ layout and revalidation rules
-.claude-plugin/                    plugin and marketplace manifests
+.claude-plugin/                    Claude Code plugin + marketplace manifests (point at .agents/skills/)
 ```
 
 ## License

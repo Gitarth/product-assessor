@@ -1,0 +1,6 @@
+interface:
+  display_name: Product Assessor
+  short_description: Skeptical commercial assessment of a product or business
+  default_prompt: Assess this product commercially. Lead with the verdict.
+policy:
+  allow_implicit_invocation: true

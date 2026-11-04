@@ -1,6 +1,10 @@
 ---
 name: product-assessor
 description: Independent, skeptical commercial assessment of a product or business — market capture and risk-adjusted long-term profitability. Use when the user asks to assess a product commercially, find opportunities to maximize market share, evaluate pricing or profitability, find weaknesses in competitive positioning, assess a codebase from a commercial perspective, find the highest-value product improvements, or reassess previous strategic recommendations. Works for any industry, business model or stack. Advisor only — never implements, files issues or changes anything but its own `.product-assessor/` history.
+license: MIT
+metadata:
+  author: Gitarth
+  version: "0.2.0"
 ---
 
 # product-assessor
@@ -55,8 +59,8 @@ full assessment or a reassessment. A quick run may still seed `.product-assessor
    business model and say in one line why they apply. Never force CAC/LTV, MRR or churn onto
    a business where they are meaningless.
 4. **Research gaps** under `references/research.md`: evidence tiers, source rules, date
-   stamps, budget cap (default 8 searches per assessment). Load WebSearch/WebFetch via
-   ToolSearch if the environment defers them. Skip research already in
+   stamps, budget cap (default 8 searches per assessment). Use the agent's web search and
+   fetch tools (in Claude Code, load them via ToolSearch if deferred). Skip research already in
    `.product-assessor/research/` unless it is stale or thin.
 5. **Analyze and rank.** Market and segments, competitive position, unit economics and
    scenarios (conservative/base/optimistic, assumptions labeled), product and technical
