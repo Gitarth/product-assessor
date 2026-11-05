@@ -3,6 +3,7 @@
 
   assess.py lint <report.md>                     structural + evidence lint, exit 1 on failure
   assess.py ledger ingest <report.md>            append the report's ```json ledger block to ledger.jsonl
+  assess.py ledger decide <id> accepted|rejected|deferred "<reason>"
   assess.py ledger resolve <id> hit|miss "<actual>"
   assess.py ledger report [--share]              overdue, hit rate, Brier by confidence, ADVICE lines
   assess.py selftest
@@ -315,6 +316,16 @@ def selftest():
         assert "(insufficient data)" in r
         s = report(p, share=True, today=dt.date(2027, 3, 1))
         assert "Ship card payments" not in s and "owner wants" not in s, s
+    with tempfile.TemporaryDirectory() as d:   # ADVICE branches fire at n>=3
+        p = ledger_path(d)
+        for i, out in enumerate(("hit", "miss", "miss"), 1):
+            append(p, {"kind": "prediction", "id": f"h{i}", "recommendation": f"r{i}", "metric": "m",
+                       "threshold": 1, "direction": ">=", "probability": 0.85, "check_by": "2027-01-01"})
+            resolve(p, f"h{i}", out, "x", today)
+            decide(p, f"h{i}", "rejected" if i < 3 else "accepted", "no")
+        r = report(p, today=today)
+        assert "ADVICE: 'high' confidence predictions hit 33% vs 85% stated. Downgrade high" in r, r
+        assert "ADVICE: more than half of recommendations rejected" in r, r
     print("selftest ok")
 
 

@@ -52,7 +52,8 @@ Credentials, API keys, tokens, customer PII beyond what an analysis needs (aggre
 don't list), payment data, employee compensation details, or anything the user marks
 confidential beyond the assessment.
 
-## When to write
+## What is always written
 
-Only when the user asks to track decisions, asks to reassess, or the project is clearly
-going to be assessed again. A one-off quick verdict writes nothing.
+The assessment file (`assessments/`) and `ledger.jsonl` are written on every run, because
+the lint needs a file and the loop needs the predictions. `profile.md` and `research/` are
+written when the project will be assessed again or the user asks to track it.

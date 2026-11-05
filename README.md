@@ -89,7 +89,7 @@ shared beyond the business owners.
 
 This is the shape the lint enforces; it passes `scripts/assess.py lint`.
 
-```markdown
+````markdown
 <!-- product-assessor v0.3.0 depth=quick date=2026-11-05 searches=3/8 -->
 ## 1. Executive verdict
 Viable. Confidence: medium. Incumbents bill $89/mo per lane [verified] (pricing page, 2026-11-04);
@@ -114,7 +114,7 @@ What would change this: evidence that target stores weigh price above switching 
 ## 9. Open questions
 Infra cost per tenant at 10 stores? Resolves the pricing floor.
 Why did the last three prospects not switch? Resolves the switching-cost hypothesis.
-```
+````
 
 ## The feedback loop
 

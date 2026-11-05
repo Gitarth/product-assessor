@@ -31,7 +31,7 @@ Never recommend illegal, deceptive, manipulative or exploitative practices.
 
 Default **quick**: executive verdict, top 3–7 prioritized opportunities, open questions.
 Use **full** (all nine sections of `references/report.md`) only when the user asks for a
-full assessment or a reassessment. A quick run may still seed `.product-assessor/profile.md`.
+full assessment or a reassessment.
 
 ## Invoke
 
@@ -44,6 +44,9 @@ full assessment or a reassessment. A quick run may still seed `.product-assessor
 - "Reassess previous strategic recommendations." (reads `.product-assessor/`, runs full)
 
 ## Workflow
+
+Run every `scripts/assess.py` command from the **project root** (the ledger lives in
+`./.product-assessor/`), calling the script by its absolute path under this skill's directory.
 
 1. **Classify.** Industry, business model and monetization, acquisition/distribution model,
    cost structure, maturity stage, competitive setting. State each in one line; mark the
