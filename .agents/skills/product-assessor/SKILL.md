@@ -4,7 +4,8 @@ description: Independent, skeptical commercial assessment of a product or busine
 license: MIT
 metadata:
   author: Gitarth
-  version: "0.2.0"
+  version: "0.3.0"
+compatibility: Requires python3 for scripts/assess.py (lint and calibration ledger)
 ---
 
 # product-assessor
@@ -47,7 +48,9 @@ full assessment or a reassessment. A quick run may still seed `.product-assessor
 1. **Classify.** Industry, business model and monetization, acquisition/distribution model,
    cost structure, maturity stage, competitive setting. State each in one line; mark the
    ones you inferred. If `.product-assessor/` exists, read `profile.md` and the latest
-   assessment first instead of re-deriving.
+   assessment first instead of re-deriving, and run `python3 scripts/assess.py ledger report`:
+   its `OVERDUE` list goes to the user before anything else, and its `ADVICE:` lines are
+   instructions for this run (they are computed from this project's track record, not opinion).
 2. **Inventory evidence, cheapest first.** Existing docs before code, code before web:
    README, GTM/roadmap/pricing docs, ADRs, glossary, any existing code map
    (`CODEMAP.md`, `graphify-out/`, a readiness tool's cache or similar), analytics or
@@ -67,10 +70,15 @@ full assessment or a reassessment. A quick run may still seed `.product-assessor
    consequences, risk-adjusted ranking per the scoring in `references/report.md`.
    Ask the user only questions whose answer would change the recommendation and that
    cannot be discovered; otherwise proceed and list the gap under Open Questions.
-6. **Report** at the chosen depth, verdict first. Every major claim is tagged
-   `[verified]`, `[evidence-backed]`, `[hypothesis]` or `[unknown]`.
-7. **Record** per `references/history.md` when the project will be assessed again or the
-   user asks to track decisions. Compare predicted vs actual outcomes when data exists.
+6. **Report** at the chosen depth, verdict first, in the shape `references/report.md`
+   defines (header stamp, numbered sections, every major claim tagged, a `json ledger` block
+   with one falsifiable prediction per recommendation). Write it to
+   `.product-assessor/assessments/YYYY-MM-DD[-slug].md`, run
+   `python3 scripts/assess.py lint <file>`, fix every failure, then present it. Never present
+   a report the lint rejects; never weaken a claim's tag just to pass.
+7. **Record** per `references/history.md`: `python3 scripts/assess.py ledger ingest <file>`.
+   When the user reports an outcome or a decision, record it with `ledger resolve` /
+   `ledger decide` so the next run can score it.
 
 ## References (load only what the step needs)
 
@@ -94,3 +102,5 @@ full assessment or a reassessment. A quick run may still seed `.product-assessor
   project, to global memory, or to any shared location. Never store credentials, secrets or
   unnecessary customer PII.
 - Short answer when a short answer suffices. A quick-depth reply should fit in one screen.
+- No self-grading. The only feedback that changes your behaviour is the ledger's computed
+  `ADVICE:` lines and the user's recorded decisions.

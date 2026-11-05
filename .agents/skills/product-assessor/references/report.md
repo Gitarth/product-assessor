@@ -4,6 +4,20 @@ Verdict first, always. **Quick** depth = sections 1, 6, 9 only. **Full** = all n
 Length follows the evidence: three findings do not need nine pages. Tag every major claim
 `[verified]` `[evidence-backed]` `[hypothesis]` `[unknown]` (tiers in research.md).
 
+`scripts/assess.py lint` enforces the shape below. What it checks:
+
+- First line is the stamp `<!-- product-assessor vX.Y.Z depth=quick|full date=YYYY-MM-DD searches=N/M -->`
+  (version from SKILL.md; N searches used of M budget; over budget needs a "budget raised" line).
+- Section headings are exactly `## 1.` … `## 9.`; quick has only 1, 6, 9; `## 1.` comes first.
+- Any line with a figure ($, %, ×, thousands) carries a tag. Table rows are exempt.
+- `[evidence-backed]` paragraphs contain a date or URL; `[verified]` paragraphs a date, URL or `file path`.
+- Section 1 has a "what would change this verdict" line; full depth has a non-empty **Stop** list.
+- Section 6 table has columns Opportunity, Impact, Capture, Cost, Time to value, Conf, Why; 3–7 rows.
+- A ```` ```json ledger ```` block (end of section 6) lists one prediction per opportunity:
+  `{"id","recommendation","metric","threshold","direction","probability","check_by"}`,
+  probability in (0,1), check_by after today. `id` = `YYYY-MM-DD-n`. Probability is your
+  honest chance the metric clears the threshold by check_by; it is what Brier scores you on.
+
 ## 1. Executive verdict
 - Commercial attractiveness (one line, with a plain grade: strong / viable / marginal / weak).
 - Biggest opportunity. Biggest weakness. Most important strategic risk.

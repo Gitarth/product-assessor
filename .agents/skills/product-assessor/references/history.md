@@ -10,7 +10,7 @@ yourself.
 ```
 .product-assessor/
   profile.md            # business classification + stable facts; update, don't append
-  decisions.md          # one row per recommendation the user accepted/rejected/deferred
+  ledger.jsonl          # append-only: predictions (from ingest), resolutions, decisions
   research/<topic>.md   # dated external research, one topic per file
   assessments/
     YYYY-MM-DD[-slug].md  # the delivered report, verbatim, with predictions marked
@@ -21,12 +21,20 @@ Industry, model, acquisition model, cost structure, stage, segments, named compe
 pricing as of a date, key assumptions. Each line dated or sourced. When a fact changes,
 replace it and note the old value with its date.
 
-### decisions.md
+### ledger.jsonl (managed by `scripts/assess.py`, never hand-edited)
 
-| Date | Recommendation (ref assessment) | Decision: accepted / rejected / deferred | Reason given | Predicted outcome + metric | Check by | Actual outcome |
-
-Fill "Actual outcome" when data appears; this is how recommendation performance is judged.
-An unfilled "Check by" that has passed is itself a finding — raise it at the next run.
+- `ledger ingest <report>` appends each prediction from the report's ledger block
+  (idempotent by id; stamps date and skill version).
+- `ledger decide <id> accepted|rejected|deferred "<reason>"` records the user's decision.
+- `ledger resolve <id> hit|miss "<actual>"` records the outcome. Hit/miss is the user's call;
+  `actual` is free text.
+- `ledger report` prints: overdue predictions (check_by passed, unresolved), hit rate and
+  Brier score, calibration per confidence bucket (high ≥0.75, medium ≥0.5, low), decision
+  counts with rejection reasons, results by skill version. Buckets under 3 resolved
+  predictions print "insufficient data" and issue no advice.
+- `ledger report --share` prints aggregates only, with no recommendation text or reasons.
+  That is the only output that may leave the project (see the repo's calibration-report issue
+  template).
 
 ### Unresolved risks
 Keep in `profile.md` under a `## Open risks` heading with the date raised; remove when

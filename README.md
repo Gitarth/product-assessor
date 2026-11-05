@@ -73,8 +73,8 @@ direction, validation plan).
    the evidence rules in [`research.md`](.agents/skills/product-assessor/references/research.md).
 5. **Analyze and rank**: upside × probability, minus downside, weighted by reversibility.
 6. **Report**, verdict first, per [`report.md`](.agents/skills/product-assessor/references/report.md).
-7. **Record** to `.product-assessor/` when the project will be assessed again, so later
-   runs compare predictions with outcomes
+7. **Lint and record.** The report must pass `scripts/assess.py lint` before it is shown.
+   Its predictions are filed in `.product-assessor/ledger.jsonl` and scored on later runs
    ([`history.md`](.agents/skills/product-assessor/references/history.md)).
 
 ## Project-local history
@@ -87,21 +87,58 @@ shared beyond the business owners.
 
 ## Example (synthetic, quick depth)
 
-```
-VERDICT: viable. Confidence: medium.
-Biggest opportunity: incumbents bill $X/mo/lane [verified, pricing page 2026-11-04]; a flat
-per-store price undercuts by ~40% while holding margin [hypothesis: infra cost/store unknown].
-Biggest weakness: one tenant, zero paying customers outside the founder [verified].
-Key risk: card payments not live; no card tender = not sellable to retail [verified].
+This is the shape the lint enforces; it passes `scripts/assess.py lint`.
+
+```markdown
+<!-- product-assessor v0.3.0 depth=quick date=2026-11-05 searches=3/8 -->
+## 1. Executive verdict
+Viable. Confidence: medium. Incumbents bill $89/mo per lane [verified] (pricing page, 2026-11-04);
+a flat per-store price undercuts by ~40% while holding margin [hypothesis: infra cost per store unknown].
+Biggest weakness: one tenant, no paying customers outside the founder [verified] (`README.md`).
+Key risk: card payments not live; no card tender means not sellable to retail [verified] (`apps/api/src/payments/`).
 What would change this: evidence that target stores weigh price above switching cost.
 
-# | Opportunity                         | Impact | Capture | Cost | TTV | Conf | Why
-1 | Ship card payments before any sales | high   | gating  | med  | 6wk | high | nothing sells without it
-2 | Flat per-store pricing vs per-lane  | med    | high    | low  | 2wk | med  | exploitable incumbent weakness
-3 | Drop restaurant placeholder scope   | margin | none    | neg  | now | high | zero demand evidence
+## 6. Prioritized opportunities
+| # | Opportunity | Impact | Capture | Cost | Time to value | Conf | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | Ship card payments before any sales | high | gating | med | 6wk | high | nothing sells without it |
+| 2 | Flat per-store pricing vs per-lane | med | high | low | 2wk | med | exploitable incumbent weakness |
+| 3 | Drop restaurant placeholder scope | margin | none | neg | now | high | zero demand evidence |
 
-Open: (1) infra cost per tenant at 10 stores? (2) why did the last 3 prospects not switch?
+```json ledger
+[{"id":"2026-11-05-1","recommendation":"Ship card payments","metric":"paying stores","threshold":1,"direction":">=","probability":0.8,"check_by":"2027-02-01"},
+ {"id":"2026-11-05-2","recommendation":"Flat per-store pricing","metric":"trial-to-paid %","threshold":20,"direction":">=","probability":0.6,"check_by":"2027-01-15"},
+ {"id":"2026-11-05-3","recommendation":"Drop restaurant scope","metric":"restaurant requests from paying stores","threshold":0,"direction":"==","probability":0.8,"check_by":"2027-05-01"}]
 ```
+
+## 9. Open questions
+Infra cost per tenant at 10 stores? Resolves the pricing floor.
+Why did the last three prospects not switch? Resolves the switching-cost hypothesis.
+```
+
+## The feedback loop
+
+Every recommendation is a forecast: a metric, a threshold, a probability and a date. The
+skill is scored on them, deterministically, by `scripts/assess.py` (python3, stdlib only,
+writes only under `.product-assessor/`):
+
+```
+python3 scripts/assess.py lint  <report.md>                      # before a report is shown; exit 1 blocks it
+python3 scripts/assess.py ledger ingest  <report.md>             # file the predictions
+python3 scripts/assess.py ledger decide  <id> accepted|rejected|deferred "<reason>"
+python3 scripts/assess.py ledger resolve <id> hit|miss "<what actually happened>"
+python3 scripts/assess.py ledger report                          # overdue, hit rate, Brier, ADVICE lines
+```
+
+On the next run the skill reads `ledger report` first. Overdue predictions are surfaced
+before new advice. If a confidence bucket is over-claiming by more than 15 points over at
+least three resolved predictions, the report emits an `ADVICE:` line that tells the skill to
+downgrade its confidence language for this project. That is the only mechanism that changes
+its behaviour: no model self-grading, no telemetry.
+
+To help improve the skill for everyone, open a
+[calibration report](.github/ISSUE_TEMPLATE/calibration-report.md) with the output of
+`ledger report --share`. It contains aggregates and the skill version only.
 
 ## Layout
 
@@ -109,6 +146,7 @@ Open: (1) infra cost per tenant at 10 stores? (2) why did the last 3 prospects n
 .agents/skills/product-assessor/   (the skill; Codex, Zed and OpenCode read this path directly)
   SKILL.md                         workflow, scope rule, depth, guardrails
   agents/openai.yaml               Codex / ChatGPT display metadata (optional)
+  scripts/assess.py                report lint + calibration ledger (python3, stdlib)
   references/metrics-by-model.md   which metrics apply to which business model, and which to skip
   references/report.md             report sections, ranking formula
   references/research.md           evidence tiers, source rules, research budget
